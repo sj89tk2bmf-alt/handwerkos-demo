@@ -496,17 +496,11 @@
             <div class="conv-head">
               <div style="display:flex; align-items:center;">
                 <button class="conv-back" id="conv-back" aria-label="Back to threads">←</button>
-                <div><div class="who">Sabine Wittek</div><div class="addr">Weserstraße 88, 12045 Berlin</div></div>
+                <div><div class="who" id="conv-who">Sabine Wittek</div><div class="addr" id="conv-addr">Weserstraße 88, 12045 Berlin</div></div>
               </div>
-              <span class="chip ok"><span class="dot"></span>booked</span>
+              <span class="chip ok" id="conv-status"><span class="dot"></span>booked</span>
             </div>
-            <div class="conv-scroll" id="conv-scroll">
-              <div class="bubble cust"><span class="tag">sabine · 1:51pm</span>Hi, the outlet in my kitchen stopped working this morning. Could someone come take a look?</div>
-              <div class="bubble ai"><span class="tag">handwerkos</span>Hi Ms. Wittek, that sounds like a tripped breaker or a short. I can send a technician tomorrow (Thu) at 9:00 AM or 2:30 PM — which works better for you?</div>
-              <div class="bubble cust"><span class="tag">sabine · 1:58pm</span>2:30 PM works well.</div>
-              <div class="bubble ai"><span class="tag">handwerkos</span>Perfect, you're booked: Thu, 2:30 PM, Weserstraße 88. You'll get a reminder an hour before.</div>
-              <div class="bubble cust"><span class="tag">sabine · 2:02pm</span>Tomorrow's appointment works, thank you!</div>
-            </div>
+            <div class="conv-scroll" id="conv-scroll"></div>
             <div class="conv-input">
               <input type="text" id="chat-input" placeholder="reply as markus (overrides ai)…" />
               <button id="chat-send"><svg class="icon" style="width:13px;height:13px"><use href="#i-send"/></svg>send</button>
@@ -734,11 +728,60 @@
   const scroll = document.getElementById('conv-scroll');
   const chatInput = document.getElementById('chat-input');
   const sendBtn = document.getElementById('chat-send');
+  const convWho = document.getElementById('conv-who');
+  const convAddr = document.getElementById('conv-addr');
+  const convStatus = document.getElementById('conv-status');
   const aiReplies = [
     "Got it, I'll log that and confirm with the customer automatically.",
     "Understood — I'll update the appointment and send a WhatsApp confirmation.",
     "Noted. Should I also release this to the technician's calendar?"
   ];
+
+  const conversations = {
+    t1: {
+      who: 'Sabine Wittek', addr: 'Weserstraße 88, 12045 Berlin',
+      statusClass: 'ok', statusText: 'booked',
+      messages: [
+        ['cust', 'sabine · 1:51pm', "Hi, the outlet in my kitchen stopped working this morning. Could someone come take a look?"],
+        ['ai', 'handwerkos', "Hi Ms. Wittek, that sounds like a tripped breaker or a short. I can send a technician tomorrow (Thu) at 9:00 AM or 2:30 PM — which works better for you?"],
+        ['cust', 'sabine · 1:58pm', "2:30 PM works well."],
+        ['ai', 'handwerkos', "Perfect, you're booked: Thu, 2:30 PM, Weserstraße 88. You'll get a reminder an hour before."],
+        ['cust', 'sabine · 2:02pm', "Tomorrow's appointment works, thank you!"],
+      ],
+    },
+    t2: {
+      who: 'Mehmet Özdemir', addr: 'Karl-Marx-Str. 201, Neukölln',
+      statusClass: 'steel', statusText: 'quote in progress',
+      messages: [
+        ['cust', 'mehmet · 11:40am', "Hi, could I get a quote for replacing our fuse box? It's an older model, 3 circuits."],
+        ['ai', 'handwerkos', "Happy to help. I can do a quick site visit — Friday 9:00 AM works. I'll prepare the quote same day afterward."],
+        ['cust', 'mehmet · 11:45am', "Friday morning is fine."],
+        ['ai', 'handwerkos', "Booked: Fri, 9:00 AM, Karl-Marx-Str. 201. Quote for the fuse box replacement will follow right after."],
+        ['cust', 'mehmet · 11:47am', "Quote for the fuse box replacement?"],
+      ],
+    },
+    t3: {
+      who: 'Müller Property Mgmt', addr: 'Wallstraße 12, Mitte',
+      statusClass: 'steel', statusText: 'callback logged',
+      messages: [
+        ['cust', 'voicemail · yesterday', "Hi, this is Müller Property. Emergency — stairwell lighting is completely out at Wallstraße 12, tenants are complaining. Please call back ASAP."],
+        ['ai', 'handwerkos', "Thanks for the report — logged as urgent. Earliest slot I have is tomorrow (Fri) 1:00 PM. Sending a confirmation text to this number now."],
+        ['cust', 'property mgr · yesterday', "Callback re: emergency at Wall St. 12"],
+      ],
+    },
+  };
+
+  function loadConversation(key) {
+    const c = conversations[key];
+    if (!c) return;
+    convWho.textContent = c.who;
+    convAddr.textContent = c.addr;
+    convStatus.className = 'chip ' + c.statusClass;
+    convStatus.innerHTML = '<span class="dot"></span>' + c.statusText;
+    scroll.innerHTML = '';
+    c.messages.forEach(([cls, tag, text]) => addBubble(cls, tag, text));
+  }
+
   function addBubble(cls, tag, text) {
     const div = document.createElement('div');
     div.className = 'bubble ' + cls;
@@ -840,9 +883,11 @@
     t.addEventListener('click', () => {
       document.querySelectorAll('.thread').forEach(x => x.classList.remove('active'));
       t.classList.add('active');
+      loadConversation(t.dataset.thread);
       inboxEl.classList.add('show-conv');
     });
   });
+  loadConversation('t1');
   convBack.addEventListener('click', () => inboxEl.classList.remove('show-conv'));
 
   /* --- Detail drawer --- */
