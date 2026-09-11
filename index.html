@@ -1,0 +1,1120 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found]){display:none!important}</style></head><body>
+<title>HandwerkOS</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&family=Cormorant+SC:wght@500;600&display=swap');
+
+  :root {
+    --ink: #0A0A0A;
+    --panel: #151412;
+    --paper: #F1ECE1;
+    --card: #FFFFFF;
+    --line: #0A0A0A;
+    --line-soft: #D8D2C0;
+    --muted: #6B6558;
+    --gold: #C9971F;
+    --gold-soft: #F1E2BC;
+    --ok: #2F6B4A;
+    --ok-soft: #E1EEE3;
+    --warn: #C9971F;
+    --warn-soft: #F1E2BC;
+    --critical: #B8342F;
+    --critical-soft: #F5DEDA;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--paper); color: var(--ink);
+    font-family: 'Archivo', -apple-system, 'Segoe UI', sans-serif;
+    font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased;
+  }
+  .mono { font-family: 'Space Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  h1, h2, h3 { text-wrap: balance; margin: 0; }
+  .icon { width: 16px; height: 16px; flex: none; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+  .tag {
+    font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.02em;
+    display: inline-block;
+  }
+  .tag::before { content: "<"; }
+  .tag::after { content: ">"; }
+
+  .shell { display: grid; grid-template-columns: 250px 1fr; min-height: 100vh; }
+
+  /* Sidebar */
+  .sidebar {
+    position: relative; overflow: hidden;
+    background: var(--ink); color: var(--paper);
+    display: flex; flex-direction: column; padding: 24px 16px; gap: 26px;
+  }
+  .sidebar-art { position: absolute; inset: 0; opacity: 0.5; pointer-events: none; }
+  .brand { display: flex; align-items: center; gap: 11px; padding: 0 6px; position: relative; z-index: 1; }
+  .brand-mark {
+    width: 32px; height: 32px; border: 1.5px solid var(--paper);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--paper); font-family: 'Archivo Black'; font-size: 15px; flex: none;
+  }
+  .brand-name { font-family: 'Archivo Black'; font-size: 17px; letter-spacing: -0.01em; text-transform: uppercase; }
+  .brand-name .os { color: var(--gold); }
+
+  .biz-chip {
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column; gap: 3px;
+    border: 1px solid rgba(241,236,225,0.28);
+    padding: 12px 13px;
+  }
+  .mission { position: relative; z-index: 1; font-family: 'Space Mono', monospace; font-size: 10.5px; line-height: 1.5; color: var(--gold); text-transform: uppercase; letter-spacing: 0.03em; padding: 0 6px; margin-top: -8px; }
+  .biz-chip .name { font-weight: 700; font-size: 13px; color: var(--paper); }
+  .biz-chip .meta { font-family: 'Space Mono', monospace; font-size: 10.5px; color: #9C978A; }
+
+  nav { display: flex; flex-direction: column; gap: 3px; margin-top: 2px; position: relative; z-index: 1; }
+  .nav-label { font-family: 'Space Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #756F60; padding: 13px 10px 6px; }
+  .nav-item {
+    position: relative;
+    display: flex; align-items: center; gap: 11px;
+    padding: 9px 10px; border: 1px solid transparent;
+    color: #B8B2A2; font-size: 13.5px; font-weight: 600;
+    cursor: pointer; background: none; text-align: left; width: 100%;
+    font-family: 'Archivo', sans-serif; transition: border-color .12s ease, color .12s ease, background .12s ease;
+  }
+  .nav-item .icon { opacity: 0.8; }
+  .nav-item:hover { color: var(--paper); border-color: rgba(241,236,225,0.3); }
+  .nav-item.active { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+  .nav-item.active .icon { opacity: 1; }
+  .nav-count {
+    margin-left: auto; font-family: 'Space Mono', monospace; font-size: 10.5px;
+    border: 1px solid currentColor; padding: 1px 6px; opacity: 0.85;
+  }
+
+  .sidebar-foot { margin-top: auto; padding: 12px 10px 0; font-family: 'Space Mono', monospace; font-size: 10.5px; color: #756F60; border-top: 1px solid rgba(241,236,225,0.18); padding-top: 15px; position: relative; z-index: 1; }
+
+  .conn-panel { position: relative; z-index: 1; border: 1px solid rgba(241,236,225,0.28); padding: 11px 12px; display: flex; flex-direction: column; gap: 7px; }
+  .conn-label { font-family: 'Space Mono', monospace; font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.08em; color: #756F60; margin-bottom: 1px; }
+  .conn-row { display: flex; align-items: center; gap: 8px; font-size: 11.5px; }
+  .conn-dot { width: 6px; height: 6px; border-radius: 50%; flex: none; }
+  .conn-dot.on { background: #57C088; }
+  .conn-dot.off { background: #756F60; }
+  .conn-row.off span:first-of-type { color: #8A8474; }
+  .conn-status { margin-left: auto; font-family: 'Space Mono', monospace; font-size: 9.5px; text-transform: uppercase; }
+  .conn-status.on { color: #57C088; }
+  .conn-status.off { color: #756F60; }
+
+  /* Main */
+  .main { display: flex; flex-direction: column; min-width: 0; }
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 32px; border-bottom: 1.5px solid var(--line); background: var(--card);
+  }
+  .topbar h1 { font-family: 'Archivo Black'; font-size: 22px; letter-spacing: -0.01em; text-transform: uppercase; }
+  .demo-badge {
+    display: inline-flex; align-items: center; gap: 7px; font-family: 'Space Mono', monospace; font-size: 10.5px; font-weight: 700; color: var(--ink);
+    background: var(--gold-soft); border: 1px solid var(--gold);
+    padding: 4px 10px; margin-left: 14px; vertical-align: middle; text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .demo-badge .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--gold); animation: pulse 1.8s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
+
+  .ask-wrap { position: relative; }
+  .ask-wrap .icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+  .ask-input {
+    width: 300px; font-family: 'Space Mono', monospace; font-size: 12.5px;
+    border: 1.5px solid var(--line); background: var(--paper); color: var(--ink);
+    padding: 9px 12px 9px 34px; transition: background .12s ease;
+  }
+  .ask-input:focus { outline: none; background: var(--gold-soft); }
+  .ask-input::placeholder { color: var(--muted); }
+
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); background: var(--ink); border-bottom: 1.5px solid var(--line); }
+  .stat { padding: 17px 26px; display: flex; flex-direction: column; gap: 5px; border-right: 1px solid rgba(241,236,225,0.15); color: var(--paper); }
+  .stat:last-child { border-right: none; }
+  .stat .label { font-family: 'Space Mono', monospace; font-size: 10.5px; color: #9C978A; text-transform: uppercase; letter-spacing: 0.06em; }
+  .stat .value { font-family: 'Archivo Black'; font-size: 25px; }
+  .stat .value.accent { color: var(--gold); }
+  .stat .value.critical { color: #E07873; }
+  .stat .sub { font-family: 'Space Mono', monospace; font-size: 10.5px; color: #756F60; }
+
+  .content { padding: 30px 32px 44px; flex: 1; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .panel-head { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 20px; gap: 16px; }
+  .panel-head .eyebrow { display: block; }
+  .panel-head .eyebrow .tag { color: var(--gold); font-weight: 700; }
+  .panel-head h2 { font-family: 'Archivo Black'; font-size: 22px; text-transform: uppercase; margin-top: 4px; letter-spacing: -0.01em; }
+  .panel-head .hint { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--muted); text-align: right; max-width: 200px; }
+
+  /* Inbox */
+  .inbox { display: grid; grid-template-columns: 300px 1fr; gap: 0; border: 1.5px solid var(--line); overflow: hidden; background: var(--card); }
+  .thread-list { border-right: 1.5px solid var(--line); max-height: 560px; overflow-y: auto; }
+  .thread { display: flex; gap: 10px; padding: 13px 15px; border-bottom: 1px solid var(--line-soft); cursor: pointer; align-items: flex-start; transition: background .1s ease; }
+  .thread:hover { background: var(--paper); }
+  .thread.active { background: var(--gold-soft); }
+  .avatar {
+    width: 32px; height: 32px; border-radius: 50%; flex: none; border: 1.5px solid var(--ink);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Mono', monospace; font-weight: 700; font-size: 12px; color: var(--ink); background: var(--card);
+  }
+  .thread-body { min-width: 0; flex: 1; }
+  .thread-top { display: flex; justify-content: space-between; gap: 6px; }
+  .thread-name { font-weight: 700; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .thread-time { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--muted); flex: none; }
+  .thread-preview { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+  .channel-tag { display: inline-flex; align-items: center; gap: 4px; font-family: 'Space Mono', monospace; font-size: 9.5px; font-weight: 700; padding: 1.5px 6px; margin-top: 6px; border: 1px solid currentColor; text-transform: uppercase; }
+  .channel-tag .icon { width: 10px; height: 10px; }
+  .channel-tag.wa { color: var(--ok); }
+  .channel-tag.mail { color: var(--muted); }
+  .channel-tag.phone { color: var(--gold); }
+
+  .conversation { display: flex; flex-direction: column; height: 560px; }
+  .conv-head { padding: 15px 20px; border-bottom: 1.5px solid var(--line); display: flex; align-items: center; justify-content: space-between; }
+  .conv-head .who { font-family: 'Archivo Black'; font-size: 14px; text-transform: uppercase; }
+  .conv-head .addr { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--muted); }
+  .conv-scroll { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 11px; background: var(--paper); }
+  .bubble { max-width: 72%; padding: 10px 14px; font-size: 13px; line-height: 1.45; border: 1.5px solid var(--line); animation: rise .2s ease; }
+  @keyframes rise { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+  .bubble.cust { align-self: flex-start; background: var(--card); }
+  .bubble.ai { align-self: flex-end; background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .bubble .tag { display: block; font-size: 9.5px; opacity: 0.7; margin-bottom: 4px; }
+  .typing { align-self: flex-end; display: flex; gap: 4px; padding: 12px 16px; border: 1.5px solid var(--line); background: var(--ink); }
+  .typing span { width: 5px; height: 5px; border-radius: 50%; background: var(--gold); animation: bounce 1.1s infinite ease-in-out; }
+  .typing span:nth-child(2) { animation-delay: .15s; } .typing span:nth-child(3) { animation-delay: .3s; }
+  @keyframes bounce { 0%,60%,100% { transform: translateY(0); opacity: .5; } 30% { transform: translateY(-4px); opacity: 1; } }
+  .conv-input { display: flex; gap: 0; border-top: 1.5px solid var(--line); }
+  .conv-input input { flex: 1; font-family: 'Space Mono', monospace; font-size: 12.5px; padding: 12px 14px; border: none; border-right: 1.5px solid var(--line); background: var(--card); color: var(--ink); }
+  .conv-input input:focus { outline: none; background: var(--paper); }
+  .conv-input button {
+    display: flex; align-items: center; gap: 6px; font-family: 'Space Mono', monospace; font-weight: 700; font-size: 12px; color: var(--ink);
+    background: var(--gold); border: none; padding: 0 18px; cursor: pointer; text-transform: uppercase;
+    transition: background .12s ease;
+  }
+  .conv-input button:hover { background: #DDAE3C; }
+  .ai-note { font-family: 'Space Mono', monospace; font-size: 10.5px; color: var(--muted); padding: 10px 16px; display: flex; align-items: center; gap: 6px; border-top: 1px solid var(--line-soft); }
+  .ai-note .icon { width: 12px; height: 12px; color: var(--ok); }
+
+  .list { display: flex; flex-direction: column; gap: 0; border-top: 1.5px solid var(--line); }
+  .row-card {
+    display: grid; grid-template-columns: 1fr auto auto auto; gap: 20px; align-items: center;
+    background: var(--card); border: 1.5px solid var(--line); border-top: none;
+    padding: 15px 18px; transition: background .12s ease;
+  }
+  .row-card:hover { background: var(--gold-soft); }
+  .row-main .title { font-weight: 700; font-size: 13.5px; }
+  .row-main .sub { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--muted); margin-top: 3px; }
+  .row-meta { font-family: 'Space Mono', monospace; font-size: 11.5px; color: var(--muted); text-align: right; white-space: nowrap; }
+  .row-amount { font-family: 'Space Mono', monospace; font-weight: 700; font-size: 14.5px; text-align: right; white-space: nowrap; }
+
+  .chip { display: inline-flex; align-items: center; gap: 6px; font-family: 'Space Mono', monospace; font-size: 10.5px; font-weight: 700; padding: 3.5px 9px; white-space: nowrap; border: 1px solid currentColor; text-transform: uppercase; letter-spacing: 0.02em; }
+  .chip .dot { width: 5px; height: 5px; border-radius: 50%; }
+  .chip.ok { color: var(--ok); }
+  .chip.ok .dot { background: var(--ok); }
+  .chip.warn { color: var(--warn); }
+  .chip.warn .dot { background: var(--warn); }
+  .chip.critical { color: var(--critical); background: var(--critical-soft); }
+  .chip.critical .dot { background: var(--critical); animation: pulse 1.6s ease-in-out infinite; }
+  .chip.steel { color: var(--muted); }
+  .chip.steel .dot { background: var(--muted); }
+  .chip.neutral { color: var(--muted); border-color: var(--line-soft); }
+  .chip.neutral .dot { background: var(--muted); }
+
+  .comp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border-top: 1.5px solid var(--line); border-left: 1.5px solid var(--line); }
+  .comp-card { background: var(--card); border-right: 1.5px solid var(--line); border-bottom: 1.5px solid var(--line); padding: 20px; transition: background .12s ease; }
+  .comp-card:hover { background: var(--gold-soft); }
+  .comp-card .top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+  .comp-card h3 { font-weight: 700; font-size: 14px; }
+  .comp-card p { margin: 0; font-size: 12.5px; color: var(--muted); }
+  .comp-card .foot { margin-top: 13px; font-family: 'Space Mono', monospace; font-size: 11px; color: var(--ink); font-weight: 700; display: flex; align-items: center; gap: 5px; text-decoration: underline; text-underline-offset: 3px; }
+  .comp-card .foot .icon { width: 12px; height: 12px; }
+
+  .section-note { margin-top: 0; padding: 15px 18px; background: var(--ink); color: var(--paper); font-size: 12.5px; display: flex; gap: 11px; }
+  .section-note .icon { color: var(--gold); margin-top: 1px; }
+  .section-note b { color: var(--gold); }
+
+  ::-webkit-scrollbar { width: 9px; height: 9px; }
+  ::-webkit-scrollbar-thumb { background: var(--line-soft); }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .panel.active { animation: fade .2s ease; }
+    @keyframes fade { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+  }
+
+  .row-card, .comp-card { cursor: pointer; }
+
+  .drawer-overlay {
+    position: fixed; inset: 0; background: rgba(10,10,10,0.55);
+    display: flex; justify-content: flex-end; z-index: 50;
+    opacity: 0; pointer-events: none; transition: opacity .18s ease;
+  }
+  .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+  .drawer {
+    width: 420px; max-width: 90vw; height: 100%; background: var(--card);
+    border-left: 1.5px solid var(--line); display: flex; flex-direction: column;
+    transform: translateX(24px); transition: transform .2s ease;
+  }
+  .drawer-overlay.open .drawer { transform: none; }
+  .drawer-head { padding: 22px 24px; border-bottom: 1.5px solid var(--line); display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; }
+  .drawer-head .eyebrow2 { font-family: 'Space Mono', monospace; font-size: 10.5px; color: var(--gold); font-weight: 700; }
+  .drawer-head h3 { font-family: 'Archivo Black'; font-size: 18px; text-transform: uppercase; margin-top: 4px; letter-spacing: -0.01em; }
+  .drawer-head .sub2 { font-family: 'Space Mono', monospace; font-size: 11.5px; color: var(--muted); margin-top: 5px; }
+  .drawer-close {
+    flex: none; width: 30px; height: 30px; border: 1.5px solid var(--line); background: var(--card);
+    display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0;
+    font-family: 'Archivo', sans-serif; font-size: 19px; line-height: 1; color: var(--ink);
+  }
+  .drawer-close:hover { background: var(--ink); color: var(--paper); }
+  .drawer-body { padding: 22px 24px; overflow-y: auto; flex: 1; }
+  .drawer-foot { padding: 14px 24px; border-top: 1.5px solid var(--line); display: flex; justify-content: space-between; align-items: center; flex: none; }
+  .drawer-foot span { font-family: 'Space Mono', monospace; font-size: 10.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .drawer-foot button { font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; text-transform: uppercase; background: var(--ink); color: var(--paper); border: 1.5px solid var(--ink); padding: 7px 14px; cursor: pointer; flex: none; margin-left: 12px; }
+  .drawer-foot button:hover { background: var(--gold); border-color: var(--gold); color: var(--ink); }
+  .drawer-foot button:disabled { opacity: 0.4; cursor: default; }
+  .drawer-foot.hidden { display: none; }
+  .drawer-kv { display: flex; flex-direction: column; gap: 0; border: 1.5px solid var(--line); margin-bottom: 22px; }
+  .drawer-kv .kv-row { display: flex; justify-content: space-between; gap: 12px; padding: 11px 14px; border-bottom: 1px solid var(--line-soft); font-size: 12.5px; }
+  .drawer-kv .kv-row:last-child { border-bottom: none; }
+  .drawer-kv .kv-row .k { font-family: 'Space Mono', monospace; color: var(--muted); text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.04em; }
+  .drawer-kv .kv-row .v { font-weight: 700; text-align: right; }
+  .drawer-section-label { font-family: 'Space Mono', monospace; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 10px; }
+  .drawer-log { display: flex; flex-direction: column; gap: 0; }
+  .log-item { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line-soft); }
+  .log-item:last-child { border-bottom: none; }
+  .log-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); margin-top: 5px; flex: none; }
+  .log-text { font-size: 12.5px; }
+  .log-time { font-family: 'Space Mono', monospace; font-size: 10.5px; color: var(--muted); margin-top: 2px; }
+
+  .doc-preview { background: var(--paper); border: 1.5px solid var(--line); padding: 18px 20px; margin-bottom: 22px; }
+  .doc-head { display: flex; justify-content: space-between; gap: 12px; font-family: 'Space Mono', monospace; font-size: 10.5px; color: var(--muted); margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--line-soft); }
+  .doc-title { font-family: 'Archivo Black'; font-size: 14px; text-transform: uppercase; margin-bottom: 12px; letter-spacing: -0.005em; }
+  .doc-addr { font-size: 12px; color: var(--muted); margin-bottom: 12px; line-height: 1.5; }
+  .doc-body p { font-size: 12.5px; line-height: 1.6; margin: 0 0 10px; }
+  .doc-body p:last-child { margin-bottom: 0; }
+  .doc-table { width: 100%; border-collapse: collapse; margin-bottom: 4px; }
+  .doc-table tr { border-bottom: 1px solid var(--line-soft); }
+  .doc-table tr:last-child { border-bottom: none; border-top: 1.5px solid var(--line); }
+  .doc-table td { padding: 7px 0; font-size: 12px; }
+  .doc-table td:last-child { text-align: right; font-family: 'Space Mono', monospace; font-weight: 700; }
+  .doc-table tr:last-child td { padding-top: 10px; font-weight: 700; }
+  .doc-status { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line-soft); font-family: 'Space Mono', monospace; font-size: 10.5px; color: var(--gold); text-transform: uppercase; }
+
+  .menu-btn, .conv-back { display: none; }
+
+  /* ---------- Mobile ---------- */
+  @media (max-width: 860px) {
+    .shell { grid-template-columns: 1fr; }
+
+    .menu-btn {
+      display: flex; align-items: center; justify-content: center;
+      width: 34px; height: 34px; border: 1.5px solid var(--line); background: var(--card);
+      cursor: pointer; padding: 0; flex: none; margin-right: 12px;
+      font-family: 'Archivo Black'; font-size: 15px; color: var(--ink); line-height: 1;
+    }
+    .menu-btn:hover { background: var(--gold); }
+    .sidebar {
+      position: fixed; top: 0; left: 0; bottom: 0; width: 260px; z-index: 70;
+      transform: translateX(-100%); transition: transform .22s ease; box-shadow: 8px 0 24px rgba(0,0,0,0.25);
+    }
+    .sidebar.open { transform: none; }
+    .sidebar-backdrop {
+      position: fixed; inset: 0; background: rgba(10,10,10,0.5); z-index: 65;
+      opacity: 0; pointer-events: none; transition: opacity .2s ease;
+    }
+    .sidebar-backdrop.open { opacity: 1; pointer-events: auto; }
+
+    .topbar { padding: 14px 16px; flex-wrap: wrap; gap: 10px; }
+    .topbar > div:first-child { display: flex; align-items: center; }
+    .topbar h1 { font-size: 17px; }
+    .demo-badge { margin-left: 10px; font-size: 9.5px; padding: 3px 7px; }
+    .ask-wrap { width: 100%; }
+    .ask-input { width: 100%; }
+
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .stat { padding: 13px 16px; }
+    .stat .value { font-size: 20px; }
+
+    .content { padding: 18px 16px 32px; }
+    .panel-head { flex-direction: column; align-items: flex-start; gap: 6px; }
+    .panel-head .hint { text-align: left; max-width: none; }
+    .panel-head h2 { font-size: 19px; }
+
+    .row-card { grid-template-columns: 1fr; row-gap: 8px; }
+    .row-meta, .row-amount { text-align: left; }
+    .row-card > *:not(.row-main) { justify-self: start; }
+
+    .comp-grid { grid-template-columns: 1fr; }
+
+    .inbox { grid-template-columns: 1fr; border: none; }
+    .thread-list { border-right: none; max-height: none; display: block; }
+    .conversation { border: 1.5px solid var(--line); }
+    .inbox.show-conv .thread-list { display: none; }
+    .inbox:not(.show-conv) .conversation { display: none; }
+    .conv-back {
+      display: flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px; border: 1.5px solid var(--line); background: var(--card);
+      cursor: pointer; padding: 0; margin-right: 10px; flex: none;
+    }
+    .conv-back .icon { transform: rotate(180deg); }
+
+    .drawer { width: 100%; max-width: 100%; }
+  }
+
+  .briefing-overlay {
+    position: fixed; inset: 0; background: rgba(10,10,10,0.55); z-index: 55;
+    display: flex; align-items: flex-start; justify-content: center; padding-top: 90px;
+    opacity: 0; pointer-events: none; transition: opacity .18s ease;
+  }
+  .briefing-overlay.open { opacity: 1; pointer-events: auto; }
+  .briefing {
+    width: 480px; max-width: 90vw; background: var(--card); border: 1.5px solid var(--line);
+    transform: translateY(-10px); transition: transform .2s ease;
+  }
+  .briefing-overlay.open .briefing { transform: none; }
+  .briefing-head { padding: 16px 20px; background: var(--ink); color: var(--paper); display: flex; align-items: center; gap: 10px; }
+  .briefing-head .dot3 { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); animation: pulse 1.4s ease-in-out infinite; }
+  .briefing-head span { font-family: 'Space Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .briefing-query { padding: 14px 20px; border-bottom: 1px solid var(--line-soft); font-family: 'Space Mono', monospace; font-size: 12.5px; color: var(--muted); }
+  .briefing-query b { color: var(--ink); font-weight: 700; }
+  .briefing-list { padding: 6px 0; }
+  .briefing-item { display: flex; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--line-soft); align-items: flex-start; }
+  .briefing-item:last-child { border-bottom: none; }
+  .briefing-item .icon { color: var(--ok); margin-top: 2px; }
+  .briefing-item .txt { font-size: 12.5px; line-height: 1.5; }
+  .briefing-item .txt b { font-weight: 700; }
+  .briefing-foot { padding: 12px 20px; font-family: 'Space Mono', monospace; font-size: 10.5px; color: var(--muted); border-top: 1.5px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
+  .briefing-foot button { font-family: 'Space Mono', monospace; font-size: 10.5px; text-transform: uppercase; background: none; border: 1px solid var(--line); padding: 4px 10px; cursor: pointer; color: var(--ink); }
+  .briefing-foot button:hover { background: var(--ink); color: var(--paper); }
+</style>
+
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="i-inbox" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></symbol>
+  <symbol id="i-tool" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></symbol>
+  <symbol id="i-card" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 2 4 6v6c0 5 3.4 8.4 8 10 4.6-1.6 8-5 8-10V6z"/><polyline points="9 12 11 14 15 10"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><polyline points="22 6 12 13 2 6"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
+  <symbol id="i-wa" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></symbol>
+</svg>
+
+<div class="shell">
+  <aside class="sidebar">
+    <svg class="sidebar-art" viewBox="0 0 250 800" preserveAspectRatio="none">
+      <circle cx="40" cy="430" r="230" fill="none" stroke="#F1ECE1" stroke-width="1" opacity="0.5"/>
+      <circle cx="10" cy="620" r="230" fill="none" stroke="#F1ECE1" stroke-width="1" opacity="0.35"/>
+    </svg>
+    <div class="brand">
+      <div class="brand-mark">H</div>
+      <div class="brand-name">Handwerk<span class="os">OS</span></div>
+    </div>
+    <div class="mission">your ai office manager<br/>for the trades</div>
+    <div class="biz-chip">
+      <span class="name">Bauer Electrical GmbH</span>
+      <span class="meta">Berlin-Neukölln</span>
+    </div>
+    <nav>
+      <div class="nav-label">// phase_01</div>
+      <button class="nav-item active" data-panel="inbox"><svg class="icon"><use href="#i-inbox"/></svg> Inbox <span class="nav-count">3</span></button>
+      <button class="nav-item" data-panel="appointments"><svg class="icon"><use href="#i-calendar"/></svg> Appointments <span class="nav-count">5</span></button>
+      <div class="nav-label">// phase_02</div>
+      <button class="nav-item" data-panel="quotes"><svg class="icon"><use href="#i-file"/></svg> Quotes</button>
+      <button class="nav-item" data-panel="jobs"><svg class="icon"><use href="#i-tool"/></svg> Jobs</button>
+      <button class="nav-item" data-panel="invoices"><svg class="icon"><use href="#i-card"/></svg> Invoices <span class="nav-count">2</span></button>
+      <div class="nav-label">// phase_03</div>
+      <button class="nav-item" data-panel="compliance"><svg class="icon"><use href="#i-shield"/></svg> Compliance</button>
+    </nav>
+    <div class="conn-panel">
+      <div class="conn-label">// connected services</div>
+      <div class="conn-row"><span class="conn-dot on"></span><span>WhatsApp Business</span><span class="conn-status on">live</span></div>
+      <div class="conn-row"><span class="conn-dot on"></span><span>Email inbox</span><span class="conn-status on">live</span></div>
+      <div class="conn-row"><span class="conn-dot on"></span><span>Calendar sync</span><span class="conn-status on">live</span></div>
+      <div class="conn-row off"><span class="conn-dot off"></span><span>Accounting / payments</span><span class="conn-status off">not yet</span></div>
+    </div>
+    <div class="sidebar-foot">demo prototype<br/>phase_01 is built for real</div>
+  </aside>
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <button class="menu-btn" id="menu-btn" aria-label="Open menu">H</button>
+        <h1 id="page-title" style="display:inline">Inbox</h1><span class="demo-badge"><span class="dot"></span>demo · no live data</span>
+      </div>
+      <div class="ask-wrap">
+        <svg class="icon"><use href="#i-search"/></svg>
+        <input class="ask-input" id="ask-input" type="text" placeholder="ask.handwerkos( 'overdue invoices' )" />
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><span class="label">open inquiries</span><span class="value accent">3</span><span class="sub">answered in &lt; 4 min</span></div>
+      <div class="stat"><span class="label">appointments / week</span><span class="value">5</span><span class="sub">next: today, 2:30 pm</span></div>
+      <div class="stat" id="stat-overdue"><span class="label">overdue invoices</span><span class="value critical" id="stat-overdue-value">€1,240</span><span class="sub" id="stat-overdue-sub">1 invoice, 14 days</span></div>
+      <div class="stat"><span class="label">vat filing</span><span class="value">12 days</span><span class="sub">draft ready</span></div>
+    </div>
+
+    <div class="content">
+
+      <!-- INBOX -->
+      <section class="panel active" id="panel-inbox">
+        <div class="panel-head">
+          <div class="eyebrow"><span class="tag">phase_01</span><h2>Inbox</h2></div>
+          <span class="hint">"we answer your customers."<br/>whatsapp / email / phone, merged</span>
+        </div>
+        <div class="inbox" id="inbox">
+          <div class="thread-list">
+            <div class="thread active" data-thread="t1">
+              <div class="avatar">SW</div>
+              <div class="thread-body">
+                <div class="thread-top"><span class="thread-name">Sabine Wittek</span><span class="thread-time">2:02 pm</span></div>
+                <div class="thread-preview">Tomorrow's appointment works, thank you!</div>
+                <span class="channel-tag wa"><svg class="icon"><use href="#i-wa"/></svg>whatsapp</span>
+              </div>
+            </div>
+            <div class="thread" data-thread="t2">
+              <div class="avatar">MÖ</div>
+              <div class="thread-body">
+                <div class="thread-top"><span class="thread-name">Mehmet Özdemir</span><span class="thread-time">11:47 am</span></div>
+                <div class="thread-preview">Quote for the fuse box replacement?</div>
+                <span class="channel-tag mail"><svg class="icon"><use href="#i-mail"/></svg>email</span>
+              </div>
+            </div>
+            <div class="thread" data-thread="t3">
+              <div class="avatar">HM</div>
+              <div class="thread-body">
+                <div class="thread-top"><span class="thread-name">Müller Property Mgmt</span><span class="thread-time">yesterday</span></div>
+                <div class="thread-preview">Callback re: emergency at Wall St. 12</div>
+                <span class="channel-tag phone"><svg class="icon"><use href="#i-phone"/></svg>phone</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="conversation">
+            <div class="conv-head">
+              <div style="display:flex; align-items:center;">
+                <button class="conv-back" id="conv-back" aria-label="Back to threads">←</button>
+                <div><div class="who">Sabine Wittek</div><div class="addr">Weserstraße 88, 12045 Berlin</div></div>
+              </div>
+              <span class="chip ok"><span class="dot"></span>booked</span>
+            </div>
+            <div class="conv-scroll" id="conv-scroll">
+              <div class="bubble cust"><span class="tag">sabine · 1:51pm</span>Hi, the outlet in my kitchen stopped working this morning. Could someone come take a look?</div>
+              <div class="bubble ai"><span class="tag">handwerkos</span>Hi Ms. Wittek, that sounds like a tripped breaker or a short. I can send a technician tomorrow (Thu) at 9:00 AM or 2:30 PM — which works better for you?</div>
+              <div class="bubble cust"><span class="tag">sabine · 1:58pm</span>2:30 PM works well.</div>
+              <div class="bubble ai"><span class="tag">handwerkos</span>Perfect, you're booked: Thu, 2:30 PM, Weserstraße 88. You'll get a reminder an hour before.</div>
+              <div class="bubble cust"><span class="tag">sabine · 2:02pm</span>Tomorrow's appointment works, thank you!</div>
+            </div>
+            <div class="conv-input">
+              <input type="text" id="chat-input" placeholder="reply as markus (overrides ai)…" />
+              <button id="chat-send"><svg class="icon" style="width:13px;height:13px"><use href="#i-send"/></svg>send</button>
+            </div>
+            <div class="ai-note"><svg class="icon"><use href="#i-check"/></svg>ai booked this appointment automatically — no manual work needed</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- APPOINTMENTS -->
+      <section class="panel" id="panel-appointments">
+        <div class="panel-head"><div class="eyebrow"><span class="tag">phase_01</span><h2>Appointments</h2></div><span class="hint">booked automatically<br/>from the inbox</span></div>
+        <div class="list">
+          <div class="row-card">
+            <div class="row-main"><div class="title">Sabine Wittek — Outlet not working</div><div class="sub">Weserstraße 88, Neukölln</div></div>
+            <span class="chip warn"><span class="dot"></span>emergency</span>
+            <div class="row-meta">Thu, 2:30 – 3:15 pm</div>
+            <div class="row-meta">45 min</div>
+          </div>
+          <div class="row-card">
+            <div class="row-main"><div class="title">Mehmet Özdemir — Site visit, fuse box</div><div class="sub">Karl-Marx-Str. 201, Neukölln</div></div>
+            <span class="chip steel"><span class="dot"></span>quote</span>
+            <div class="row-meta">Fri, 9:00 – 10:00 am</div>
+            <div class="row-meta">60 min</div>
+          </div>
+          <div class="row-card">
+            <div class="row-main"><div class="title">Müller Property Mgmt — Stairwell lighting maintenance</div><div class="sub">Wallstraße 12, Mitte</div></div>
+            <span class="chip neutral"><span class="dot"></span>maintenance</span>
+            <div class="row-meta">Fri, 1:00 – 2:00 pm</div>
+            <div class="row-meta">60 min</div>
+          </div>
+          <div class="row-card">
+            <div class="row-main"><div class="title">Krause Family — Annual smoke detector check</div><div class="sub">Sonnenallee 45, Neukölln</div></div>
+            <span class="chip neutral"><span class="dot"></span>maintenance</span>
+            <div class="row-meta">Mon, 10:00 – 10:30 am</div>
+            <div class="row-meta">30 min</div>
+          </div>
+          <div class="row-card">
+            <div class="row-main"><div class="title">Café Lindenhof — Outdoor lighting</div><div class="sub">Weichselstraße 4, Neukölln</div></div>
+            <span class="chip steel"><span class="dot"></span>quote</span>
+            <div class="row-meta">Tue, 4:00 – 5:00 pm</div>
+            <div class="row-meta">60 min</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- QUOTES -->
+      <section class="panel" id="panel-quotes">
+        <div class="panel-head"><div class="eyebrow"><span class="tag">phase_02</span><h2>Quotes</h2></div><span class="hint">drafted by ai, you confirm<br/>before it's sent</span></div>
+        <div class="list">
+          <div class="row-card">
+            <div class="row-main"><div class="title">QT-2026-014 · Mehmet Özdemir</div><div class="sub">Fuse box replacement, 3 circuits</div></div>
+            <span class="chip neutral"><span class="dot"></span>draft</span>
+            <div class="row-meta">created today</div>
+            <div class="row-amount">€1,890.00</div>
+          </div>
+          <div class="row-card">
+            <div class="row-main"><div class="title">QT-2026-013 · Café Lindenhof</div><div class="sub">Outdoor lighting, 6 spotlights + timer</div></div>
+            <span class="chip steel"><span class="dot"></span>sent</span>
+            <div class="row-meta">sent 2 days ago</div>
+            <div class="row-amount">€760.00</div>
+          </div>
+          <div class="row-card">
+            <div class="row-main"><div class="title">QT-2026-011 · Krause Family</div><div class="sub">Wallbox installation, 11 kW</div></div>
+            <span class="chip ok"><span class="dot"></span>accepted</span>
+            <div class="row-meta">accepted 5 days ago</div>
+            <div class="row-amount">€2,340.00</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- JOBS -->
+      <section class="panel" id="panel-jobs">
+        <div class="panel-head"><div class="eyebrow"><span class="tag">phase_02</span><h2>Jobs</h2></div><span class="hint">"we book your jobs."<br/>from accepted quotes &amp; direct bookings</span></div>
+        <div class="list">
+          <div class="row-card">
+            <div class="row-main"><div class="title">JOB-2026-041 · Krause Family — Wallbox installation</div><div class="sub">Materials ordered · Technician: Jonas P.</div></div>
+            <span class="chip warn"><span class="dot"></span>in progress</span>
+            <div class="row-meta">Start: Mon, 8:00 am</div>
+            <div class="row-meta">1 day planned</div>
+          </div>
+          <div class="row-card">
+            <div class="row-main"><div class="title">JOB-2026-038 · Müller Property Mgmt — Stairwell maintenance</div><div class="sub">Recurring job, quarterly</div></div>
+            <span class="chip neutral"><span class="dot"></span>scheduled</span>
+            <div class="row-meta">Fri, 1:00 pm</div>
+            <div class="row-meta">1 hr planned</div>
+          </div>
+          <div class="row-card">
+            <div class="row-main"><div class="title">JOB-2026-035 · Sonnenschein Bakery — Display fridge wiring</div><div class="sub">Signed off by Markus Bauer</div></div>
+            <span class="chip ok"><span class="dot"></span>completed</span>
+            <div class="row-meta">completed 3 days ago</div>
+            <div class="row-meta">2.5 hrs</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- INVOICES -->
+      <section class="panel" id="panel-invoices">
+        <div class="panel-head"><div class="eyebrow"><span class="tag">phase_02</span><h2>Invoices</h2></div><span class="hint">"we create your invoices.<br/>we chase unpaid ones."</span></div>
+        <div class="list">
+          <div class="row-card" id="row-inv-102">
+            <div class="row-main"><div class="title">INV-2026-102 · Sonnenschein Bakery</div><div class="sub">Display fridge wiring · due Sep 5, 2026</div></div>
+            <span class="chip critical" id="chip-inv-102"><span class="dot"></span>14 days overdue</span>
+            <div class="row-meta" id="meta-inv-102">2nd reminder sent</div>
+            <div class="row-amount">€480.00</div>
+          </div>
+          <div class="row-card">
+            <div class="row-main"><div class="title">INV-2026-101 · Café Lindenhof</div><div class="sub">Deposit, outdoor lighting · due Sep 12, 2026</div></div>
+            <span class="chip warn"><span class="dot"></span>due in 3 days</span>
+            <div class="row-meta">reminder scheduled</div>
+            <div class="row-amount">€760.00</div>
+          </div>
+          <div class="row-card">
+            <div class="row-main"><div class="title">INV-2026-098 · Krause Family</div><div class="sub">Wallbox installation, final payment</div></div>
+            <span class="chip ok"><span class="dot"></span>paid</span>
+            <div class="row-meta">via SEPA · 6 days ago</div>
+            <div class="row-amount">€2,340.00</div>
+          </div>
+        </div>
+
+        <div class="nav-label" style="color:var(--muted); padding-left:0; margin-top:22px;">// supplier invoices — payable</div>
+        <div class="list">
+          <div class="row-card" data-direction="in">
+            <div class="row-main"><div class="title">RE-2026-0847 · Elektro-Großhandel Berlin</div><div class="sub">Cable, conduit &amp; fittings · due Sep 20, 2026</div></div>
+            <span class="chip steel"><span class="dot"></span>scheduled to pay</span>
+            <div class="row-meta">auto-pay in 10 days</div>
+            <div class="row-amount">€612.40</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- COMPLIANCE -->
+      <section class="panel" id="panel-compliance">
+        <div class="panel-head"><div class="eyebrow"><span class="tag">phase_03</span><h2>Compliance</h2></div><span class="hint">"we organize your paperwork."<br/>ai drafts, your accountant reviews &amp; files</span></div>
+        <div class="comp-grid">
+          <div class="comp-card">
+            <div class="top"><h3>VAT Return, Q3</h3><span class="chip warn"><span class="dot"></span>due in 12 days</span></div>
+            <p>Draft prepared from 34 invoices &amp; expense records, ready to export for your accountant, Ms. Hoffmann.</p>
+            <div class="foot">export draft →</div>
+          </div>
+          <div class="comp-card">
+            <div class="top"><h3>Business Liability Insurance</h3><span class="chip ok"><span class="dot"></span>active</span></div>
+            <p>Policy with Allianz, valid through 03/2027. No open items.</p>
+            <div class="foot">view policy →</div>
+          </div>
+          <div class="comp-card">
+            <div class="top"><h3>Master Craftsman Certificate</h3><span class="chip ok"><span class="dot"></span>on file</span></div>
+            <p>Registered with the Berlin Chamber of Skilled Crafts, Electrical trade. Last verified: Jan 2026.</p>
+            <div class="foot">open document →</div>
+          </div>
+          <div class="comp-card">
+            <div class="top"><h3>Letter to the Neukölln Tax Office</h3><span class="chip steel"><span class="dot"></span>draft ready</span></div>
+            <p>Reply to their inquiry about the small-business VAT exemption — draft written, waiting on your approval to send.</p>
+            <div class="foot">review draft →</div>
+          </div>
+          <div class="comp-card">
+            <div class="top"><h3>Employee Documents</h3><span class="chip ok"><span class="dot"></span>up to date</span></div>
+            <p>Jonas P. — apprenticeship certificate on file. 2 employees, all contracts and safety certs current.</p>
+            <div class="foot">view records →</div>
+          </div>
+          <div class="comp-card">
+            <div class="top"><h3>Procurement — Cable &amp; Conduit</h3><span class="chip warn"><span class="dot"></span>reorder suggested</span></div>
+            <p>Stock for the Krause wallbox job is running low. AI drafted a reorder with your usual supplier, Elektro-Großhandel Berlin.</p>
+            <div class="foot">review order →</div>
+          </div>
+        </div>
+        <div class="section-note"><svg class="icon"><use href="#i-shield"/></svg><span><b>Important:</b> HandwerkOS prepares tax and government documents — nothing is sent or filed unless you or your accountant explicitly approve it.</span></div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<div class="briefing-overlay" id="briefing-overlay">
+  <div class="briefing">
+    <div class="briefing-head"><span class="dot3"></span><span>handwerkos · thinking</span></div>
+    <div class="briefing-query">you asked: <b id="briefing-query-text">"run my business"</b></div>
+    <div class="briefing-list" id="briefing-list"></div>
+    <div class="briefing-foot">
+      <span>tool_calls: 4 · authorized actions only</span>
+      <button id="briefing-close">close</button>
+    </div>
+  </div>
+</div>
+
+<div class="drawer-overlay" id="drawer-overlay">
+  <div class="drawer" id="drawer" role="dialog" aria-modal="true">
+    <div class="drawer-head">
+      <div>
+        <div class="eyebrow2" id="drawer-eyebrow">record</div>
+        <h3 id="drawer-title">Title</h3>
+        <div class="sub2" id="drawer-sub">Subtitle</div>
+      </div>
+      <button class="drawer-close" id="drawer-close" aria-label="Close">×</button>
+    </div>
+    <div class="drawer-body">
+      <div class="drawer-kv" id="drawer-kv"></div>
+      <div id="drawer-doc-wrap"></div>
+      <div class="drawer-section-label">// activity log</div>
+      <div class="drawer-log" id="drawer-log"></div>
+    </div>
+    <div class="drawer-foot hidden" id="drawer-foot">
+      <span id="drawer-filename">record.txt</span>
+      <button id="drawer-download">download .txt</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const titles = {
+    inbox: 'Inbox', appointments: 'Appointments', quotes: 'Quotes',
+    jobs: 'Jobs', invoices: 'Invoices', compliance: 'Compliance'
+  };
+  document.querySelectorAll('.nav-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.dataset.panel;
+      document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('panel-' + key).classList.add('active');
+      document.getElementById('page-title').textContent = titles[key];
+    });
+  });
+
+  const scroll = document.getElementById('conv-scroll');
+  const chatInput = document.getElementById('chat-input');
+  const sendBtn = document.getElementById('chat-send');
+  const aiReplies = [
+    "Got it, I'll log that and confirm with the customer automatically.",
+    "Understood — I'll update the appointment and send a WhatsApp confirmation.",
+    "Noted. Should I also release this to the technician's calendar?"
+  ];
+  function addBubble(cls, tag, text) {
+    const div = document.createElement('div');
+    div.className = 'bubble ' + cls;
+    div.innerHTML = '<span class="tag">' + tag + '</span>' + text;
+    scroll.appendChild(div);
+    scroll.scrollTop = scroll.scrollHeight;
+    return div;
+  }
+  function send() {
+    const val = chatInput.value.trim();
+    if (!val) return;
+    addBubble('ai', 'markus (override)', val);
+    chatInput.value = '';
+    const typing = document.createElement('div');
+    typing.className = 'typing';
+    typing.innerHTML = '<span></span><span></span><span></span>';
+    scroll.appendChild(typing);
+    scroll.scrollTop = scroll.scrollHeight;
+    setTimeout(() => {
+      typing.remove();
+      addBubble('cust', 'sabine', aiReplies[Math.floor(Math.random() * aiReplies.length)]);
+    }, 900);
+  }
+  sendBtn.addEventListener('click', send);
+  chatInput.addEventListener('keydown', e => { if (e.key === 'Enter') send(); });
+
+  const ask = document.getElementById('ask-input');
+  const askMap = [
+    [/invoice|payment|overdue/i, 'invoices'],
+    [/appointment|calendar|schedule/i, 'appointments'],
+    [/quote|estimate/i, 'quotes'],
+    [/job/i, 'jobs'],
+    [/tax|compliance|vat|accountant/i, 'compliance'],
+    [/message|inbox|whatsapp/i, 'inbox'],
+  ];
+  const briefingTriggers = /run my business|handle everything|give me an overview|status update|what needs my attention/i;
+
+  const briefingOverlay = document.getElementById('briefing-overlay');
+  const briefingQueryText = document.getElementById('briefing-query-text');
+  const briefingList = document.getElementById('briefing-list');
+  const briefingSteps = [
+    ['i-inbox', 'Checked the <b>inbox</b> — 3 open conversations, all answered within 4 minutes.'],
+    ['i-card', 'Sent the <b>2nd reminder</b> on INV-2026-102, Sonnenschein Bakery — €480.00, 14 days overdue.'],
+    ['i-calendar', 'Confirmed <b>Sabine Wittek\'s</b> appointment tomorrow at 2:30 PM — no action needed from you.'],
+    ['i-shield', '<b>VAT return (Q3)</b> draft is ready — waiting on your approval to export for your accountant.'],
+  ];
+  let businessRan = false;
+  function applyBusinessActions() {
+    if (businessRan) return;
+    businessRan = true;
+    const chip = document.getElementById('chip-inv-102');
+    const meta = document.getElementById('meta-inv-102');
+    const statVal = document.getElementById('stat-overdue-value');
+    const statSub = document.getElementById('stat-overdue-sub');
+    if (chip) chip.innerHTML = '<span class="dot"></span>3rd reminder sent';
+    if (meta) meta.textContent = 'sent just now by AI';
+    if (statSub) statSub.textContent = '1 invoice, reminder sent';
+  }
+  function showBriefing(query) {
+    briefingQueryText.textContent = '"' + query + '"';
+    briefingList.innerHTML = briefingSteps.map(([icon, text], i) =>
+      '<div class="briefing-item" style="animation:rise .25s ease backwards; animation-delay:' + (i*0.12) + 's"><svg class="icon"><use href="#i-check"/></svg><div class="txt">' + text + '</div></div>'
+    ).join('');
+    briefingOverlay.classList.add('open');
+    setTimeout(applyBusinessActions, 550);
+  }
+  document.getElementById('briefing-close').addEventListener('click', () => briefingOverlay.classList.remove('open'));
+  briefingOverlay.addEventListener('click', e => { if (e.target === briefingOverlay) briefingOverlay.classList.remove('open'); });
+
+  ask.addEventListener('keydown', e => {
+    if (e.key !== 'Enter') return;
+    const query = ask.value.trim();
+    if (!query) return;
+    if (briefingTriggers.test(query)) {
+      showBriefing(query);
+      ask.value = '';
+      return;
+    }
+    const hit = askMap.find(([re]) => re.test(query));
+    const key = hit ? hit[1] : 'inbox';
+    document.querySelector('.nav-item[data-panel="' + key + '"]').click();
+    ask.value = '';
+  });
+
+  /* --- Mobile sidebar --- */
+  const sidebar = document.querySelector('.sidebar');
+  const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+  const menuBtn = document.getElementById('menu-btn');
+  function openSidebar() { sidebar.classList.add('open'); sidebarBackdrop.classList.add('open'); }
+  function closeSidebar() { sidebar.classList.remove('open'); sidebarBackdrop.classList.remove('open'); }
+  menuBtn.addEventListener('click', openSidebar);
+  sidebarBackdrop.addEventListener('click', closeSidebar);
+  document.querySelectorAll('.nav-item').forEach(b => b.addEventListener('click', closeSidebar));
+
+  /* --- Mobile inbox: thread list <-> conversation --- */
+  const inboxEl = document.getElementById('inbox');
+  const convBack = document.getElementById('conv-back');
+  document.querySelectorAll('.thread').forEach(t => {
+    t.addEventListener('click', () => {
+      document.querySelectorAll('.thread').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      inboxEl.classList.add('show-conv');
+    });
+  });
+  convBack.addEventListener('click', () => inboxEl.classList.remove('show-conv'));
+
+  /* --- Detail drawer --- */
+  const overlay = document.getElementById('drawer-overlay');
+  const drawer = document.getElementById('drawer');
+  const dEyebrow = document.getElementById('drawer-eyebrow');
+  const dTitle = document.getElementById('drawer-title');
+  const dSub = document.getElementById('drawer-sub');
+  const dKv = document.getElementById('drawer-kv');
+  const dLog = document.getElementById('drawer-log');
+
+  const logByStatus = {
+    ok: [
+      ['Marked complete automatically.', '2 hours ago'],
+      ['Confirmed — no action needed from you.', 'today']
+    ],
+    warn: [
+      ['AI flagged this as needing attention.', 'this morning'],
+      ['Reminder scheduled automatically.', 'yesterday']
+    ],
+    critical: [
+      ['1st reminder sent automatically.', '7 days ago'],
+      ['2nd reminder sent automatically.', '2 days ago'],
+      ['Flagged for your review.', 'today']
+    ],
+    neutral: [
+      ['Created by AI from the inbox conversation.', 'today'],
+      ['Waiting on the next step.', 'just now']
+    ],
+    steel: [
+      ['Sent to the customer by AI.', '2 days ago'],
+      ['Awaiting a response.', 'today']
+    ]
+  };
+  function statusClass(chip) {
+    if (!chip) return 'neutral';
+    return ['ok','warn','critical','neutral','steel'].find(c => chip.classList.contains(c)) || 'neutral';
+  }
+  function openDrawer({ eyebrow, title, sub, rows, status }) {
+    dEyebrow.textContent = eyebrow;
+    dTitle.textContent = title;
+    dSub.textContent = sub || '';
+    dKv.innerHTML = rows.map(([k,v]) => '<div class="kv-row"><span class="k">'+k+'</span><span class="v">'+v+'</span></div>').join('');
+    const log = logByStatus[status] || logByStatus.neutral;
+    dLog.innerHTML = log.map(([text,time]) => '<div class="log-item"><span class="log-dot"></span><div><div class="log-text">'+text+'</div><div class="log-time">'+time+'</div></div></div>').join('');
+    overlay.classList.add('open');
+  }
+  function closeDrawer() { overlay.classList.remove('open'); }
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeDrawer(); });
+  document.getElementById('drawer-close').addEventListener('click', closeDrawer);
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    closeDrawer();
+    briefingOverlay.classList.remove('open');
+  });
+
+  /* --- Document preview + download --- */
+  const drawerDocWrap = document.getElementById('drawer-doc-wrap');
+  const drawerFoot = document.getElementById('drawer-foot');
+  const drawerFilename = document.getElementById('drawer-filename');
+  const drawerDownloadBtn = document.getElementById('drawer-download');
+  let currentDocText = '';
+  let currentDocName = 'record.txt';
+
+  function slugify(s) {
+    return (s || 'document').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'document';
+  }
+  function setDrawerDoc(html, filename) {
+    drawerDocWrap.innerHTML = html || '';
+    if (html) {
+      currentDocText = dTitle.textContent + '\n' + drawerDocWrap.innerText;
+      currentDocName = filename;
+      drawerFilename.textContent = filename;
+      drawerFoot.classList.remove('hidden');
+    } else {
+      drawerFoot.classList.add('hidden');
+    }
+  }
+  drawerDownloadBtn.addEventListener('click', async () => {
+    if (!currentDocText) return;
+    const original = drawerDownloadBtn.textContent;
+    drawerDownloadBtn.disabled = true;
+    try {
+      const downloadsCap = (typeof window.claude !== 'undefined' && window.claude.use)
+        ? await window.claude.use('downloads') : null;
+      if (!downloadsCap) {
+        drawerDownloadBtn.textContent = 'unavailable here';
+      } else {
+        await downloadsCap.save({ filename: currentDocName, data: currentDocText });
+        drawerDownloadBtn.textContent = 'saved ✓';
+      }
+    } catch (e) {
+      drawerDownloadBtn.textContent = (e && e.code === 'declined') ? 'declined' : 'unavailable here';
+    } finally {
+      setTimeout(() => { drawerDownloadBtn.textContent = original; drawerDownloadBtn.disabled = false; }, 1600);
+    }
+  });
+
+  function parseAmount(str) {
+    return parseFloat((str || '0').replace(/[€,]/g, '')) || 0;
+  }
+
+  function financialDoc({ docNumber, kind, counterparty, description, dateLine, amount, statusText, direction }) {
+    const amountNum = parseAmount(amount);
+    const net = amountNum / 1.19;
+    const vat = amountNum - net;
+    const seller = direction === 'in' ? counterparty : 'Bauer Electrical GmbH';
+    const buyer = direction === 'in' ? 'Bauer Electrical GmbH' : counterparty;
+    return `
+      <div class="doc-preview">
+        <div class="doc-head"><span>${seller} · IBAN DE12 3456 7890 1234 5678 90</span><span>${dateLine}</span></div>
+        <div class="doc-title">${kind} ${docNumber}</div>
+        <div class="doc-addr">Bill to:<br/>${buyer}</div>
+        <table class="doc-table">
+          <tr><td>${description}</td><td>€${net.toFixed(2)}</td></tr>
+          <tr><td>VAT (19%)</td><td>€${vat.toFixed(2)}</td></tr>
+          <tr><td>Total</td><td>€${amountNum.toFixed(2)}</td></tr>
+        </table>
+        <div class="doc-status">${statusText}</div>
+      </div>`;
+  }
+
+  function serviceDoc({ docNumber, kind, customer, address, when, description, statusText }) {
+    return `
+      <div class="doc-preview">
+        <div class="doc-head"><span>Bauer Electrical GmbH</span><span>${when}</span></div>
+        <div class="doc-title">${kind}${docNumber ? ' ' + docNumber : ''} — ${customer}</div>
+        <div class="doc-addr">${address}</div>
+        <div class="doc-body"><p>${description}</p></div>
+        <div class="doc-status">${statusText}</div>
+      </div>`;
+  }
+
+  document.querySelectorAll('.row-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const title = card.querySelector('.row-main .title')?.textContent || '';
+      const sub = card.querySelector('.row-main .sub')?.textContent || '';
+      const chip = card.querySelector('.chip');
+      const metas = [...card.querySelectorAll('.row-meta')].map(m => m.textContent);
+      const amount = card.querySelector('.row-amount')?.textContent;
+      const rows = [];
+      if (chip) rows.push(['status', chip.textContent.trim()]);
+      metas.forEach((m,i) => rows.push(['detail ' + (i+1), m]));
+      if (amount) rows.push(['amount', amount]);
+
+      const panelId = card.closest('.panel')?.id || '';
+      const statusText = chip ? chip.textContent.trim() : metas.join(' · ');
+      let docHtml = '';
+
+      if (panelId === 'panel-invoices' && amount) {
+        const direction = card.dataset.direction === 'in' ? 'in' : 'out';
+        const [numPart, counterPart] = title.split(' · ');
+        const [descPart, datePart] = sub.split(' · ');
+        docHtml = financialDoc({
+          docNumber: numPart || title, kind: 'Invoice',
+          counterparty: (counterPart || title).trim(), description: (descPart || sub).trim(),
+          dateLine: (datePart || metas[0] || '').trim(), amount, statusText, direction
+        });
+      } else if (panelId === 'panel-quotes' && amount) {
+        const [numPart, counterPart] = title.split(' · ');
+        docHtml = financialDoc({
+          docNumber: numPart || title, kind: 'Quote',
+          counterparty: (counterPart || title).trim(), description: sub.trim(),
+          dateLine: metas[0] || '', amount, statusText, direction: 'out'
+        });
+      } else if (panelId === 'panel-appointments') {
+        const [customer, description] = title.split(' — ');
+        docHtml = serviceDoc({
+          docNumber: '', kind: 'Service Confirmation',
+          customer: (customer || title).trim(), address: sub,
+          when: metas[0] || '', description: (description || sub).trim(), statusText
+        });
+      } else if (panelId === 'panel-jobs') {
+        const [numPart, rest] = title.split(' · ');
+        const [customer, description] = (rest || title).split(' — ');
+        docHtml = serviceDoc({
+          docNumber: numPart, kind: 'Work Order',
+          customer: (customer || '').trim(), address: sub,
+          when: metas[0] || '', description: (description || sub).trim(), statusText
+        });
+      }
+
+      setDrawerDoc(docHtml, slugify(title) + '.txt');
+      openDrawer({ eyebrow: 'record', title, sub, rows, status: statusClass(chip) });
+    });
+  });
+
+  const complianceDocs = {
+    'VAT Return, Q3': `
+      <div class="doc-preview">
+        <div class="doc-head"><span>Bauer Electrical GmbH · St.-Nr. 34/567/89012</span><span>10.09.2026</span></div>
+        <div class="doc-title">Umsatzsteuervoranmeldung — Q3 2026</div>
+        <table class="doc-table">
+          <tr><td>Umsatz (steuerpflichtig, 19%)</td><td>€48,260.00</td></tr>
+          <tr><td>Umsatzsteuer</td><td>€9,169.40</td></tr>
+          <tr><td>Vorsteuer</td><td>€3,412.15</td></tr>
+          <tr><td>Zahllast</td><td>€5,757.25</td></tr>
+        </table>
+        <div class="doc-status">draft — not yet submitted</div>
+      </div>`,
+    'Business Liability Insurance': `
+      <div class="doc-preview">
+        <div class="doc-head"><span>Allianz Versicherungs-AG</span><span>Policy BH-4471-2024-DE</span></div>
+        <div class="doc-title">Betriebshaftpflichtversicherung</div>
+        <table class="doc-table">
+          <tr><td>Insured</td><td>Bauer Electrical GmbH</td></tr>
+          <tr><td>Coverage per claim</td><td>€3,000,000</td></tr>
+          <tr><td>Annual premium</td><td>€840.00</td></tr>
+          <tr><td>Valid</td><td>04/2024 – 03/2027</td></tr>
+        </table>
+        <div class="doc-status">active</div>
+      </div>`,
+    'Master Craftsman Certificate': `
+      <div class="doc-preview">
+        <div class="doc-head"><span>Handwerkskammer Berlin</span><span>Reg. HWK-B-88341</span></div>
+        <div class="doc-title">Eintragung in die Handwerksrolle</div>
+        <div class="doc-body">
+          <p>This certifies that <b>Markus Bauer</b> is registered in the Skilled Crafts Register for the trade of <b>Elektrotechniker-Handwerk</b> (Electrical Installation), registered since March 2019.</p>
+        </div>
+        <div class="doc-status">on file · last verified Jan 2026</div>
+      </div>`,
+    'Letter to the Neukölln Tax Office': `
+      <div class="doc-preview">
+        <div class="doc-head"><span>Bauer Electrical GmbH</span><span>Berlin, 10.09.2026</span></div>
+        <div class="doc-addr">Finanzamt Neukölln<br/>Thiemannstraße 1, 12059 Berlin</div>
+        <div class="doc-title">Re: Kleinunternehmerregelung §19 UStG</div>
+        <div class="doc-body">
+          <p>Dear Sir or Madam,</p>
+          <p>Thank you for your letter dated August 28, 2026. We confirm that Bauer Electrical GmbH's turnover for the previous calendar year was below the €25,000 threshold under §19 UStG, and we therefore continue to qualify for the small business exemption.</p>
+          <p>Kind regards,<br/>Markus Bauer</p>
+        </div>
+        <div class="doc-status">draft — awaiting your approval to send</div>
+      </div>`,
+    'Employee Documents': `
+      <div class="doc-preview">
+        <div class="doc-head"><span>Personnel file</span><span>Bauer Electrical GmbH</span></div>
+        <div class="doc-title">Employee Record — Jonas P.</div>
+        <table class="doc-table">
+          <tr><td>Role</td><td>Elektroinstallateur</td></tr>
+          <tr><td>Employed since</td><td>June 2022</td></tr>
+          <tr><td>Contract</td><td>Permanent, full-time</td></tr>
+          <tr><td>Safety cert. (DGUV V3)</td><td>valid to 11/2027</td></tr>
+        </table>
+        <div class="doc-status">up to date</div>
+      </div>`,
+    'Procurement — Cable & Conduit': `
+      <div class="doc-preview">
+        <div class="doc-head"><span>PO-2026-019</span><span>10.09.2026</span></div>
+        <div class="doc-title">Purchase Order — Elektro-Großhandel Berlin</div>
+        <table class="doc-table">
+          <tr><td>NYM-J 3×1.5mm² cable, 100m — ×2</td><td>€284.00</td></tr>
+          <tr><td>Conduit fittings, assorted</td><td>€96.40</td></tr>
+          <tr><td>Circuit breakers 16A, 5-pack — ×2</td><td>€232.00</td></tr>
+          <tr><td>Total</td><td>€612.40</td></tr>
+        </table>
+        <div class="doc-status">draft — review before ordering</div>
+      </div>`
+  };
+
+  document.querySelectorAll('.comp-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const title = card.querySelector('h3')?.textContent || '';
+      const sub = card.querySelector('p')?.textContent || '';
+      const chip = card.querySelector('.chip');
+      const foot = card.querySelector('.foot')?.textContent?.trim();
+      const rows = [];
+      if (chip) rows.push(['status', chip.textContent.trim()]);
+      if (foot) rows.push(['next action', foot]);
+      setDrawerDoc(complianceDocs[title.trim()] || '', slugify(title) + '.txt');
+      openDrawer({ eyebrow: 'compliance document', title, sub: '', rows, status: statusClass(chip) });
+    });
+  });
+</script>
+
+</body></html>
