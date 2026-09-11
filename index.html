@@ -527,7 +527,7 @@
               <input type="text" id="chat-input" placeholder="reply as markus (overrides ai)…" />
               <button id="chat-send"><svg class="icon" style="width:13px;height:13px"><use href="#i-send"/></svg>send</button>
             </div>
-            <div class="ai-note"><svg class="icon"><use href="#i-check"/></svg>ai booked this appointment automatically — no manual work needed</div>
+            <div class="ai-note"><svg class="icon"><use href="#i-check"/></svg><span id="ai-note-text">ai booked this appointment automatically — no manual work needed</span></div>
           </div>
         </div>
       </section>
@@ -768,6 +768,7 @@
     t1: {
       who: 'Sabine Wittek', addr: 'Weserstraße 88, 12045 Berlin',
       chipClass: 'ok', chipText: 'booked', replyName: 'sabine',
+      note: 'ai booked this appointment automatically — no manual work needed',
       replies: [
         "Got it, I'll log that and confirm with the customer automatically.",
         "Understood — I'll update the appointment and send a WhatsApp confirmation.",
@@ -784,6 +785,7 @@
     t2: {
       who: 'Mehmet Özdemir', addr: 'Karl-Marx-Str. 201, Neukölln',
       chipClass: 'steel', chipText: 'site visit scheduled', replyName: 'mehmet',
+      note: 'ai scheduled this site visit — the formal quote still needs your review before sending',
       replies: [
         "Got it — I'll send a written quote right after the site visit.",
         "Noted, I'll bring that up with the technician before the visit.",
@@ -798,6 +800,7 @@
     t3: {
       who: 'Müller Property Mgmt', addr: 'Wallstraße 12, Mitte',
       chipClass: 'warn', chipText: 'technician dispatched', replyName: 'müller pm',
+      note: 'ai flagged this as an emergency and dispatched a technician automatically',
       replies: [
         "Understood, I'll pass that along to the technician on site.",
         "Noted — I'll follow up with photos once the work is done.",
@@ -820,6 +823,7 @@
     scroll.scrollTop = scroll.scrollHeight;
     return div;
   }
+  const aiNoteText = document.getElementById('ai-note-text');
   function renderConversation(id) {
     const c = conversations[id];
     if (!c) return;
@@ -830,6 +834,7 @@
     convChip.innerHTML = '<span class="dot"></span>' + c.chipText;
     scroll.innerHTML = '';
     c.bubbles.forEach(([cls, tag, text]) => addBubble(cls, tag, text));
+    if (aiNoteText && c.note) aiNoteText.textContent = c.note;
   }
   function send() {
     const val = chatInput.value.trim();
