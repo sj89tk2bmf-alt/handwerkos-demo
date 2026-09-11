@@ -219,8 +219,7 @@
   .comp-card { background: var(--card); border-right: 1.5px solid var(--line); border-bottom: 1.5px solid var(--line); padding: 20px; transition: background .12s ease; }
   .comp-card:hover { background: var(--gold-soft); }
   .comp-card .top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
-  .comp-card h3 { font-weight: 700; font-size: 14px; margin-top: 4px; }
-  .comp-cat { color: var(--gold); font-weight: 700; }
+  .comp-card h3 { font-weight: 700; font-size: 14px; }
   .comp-card p { margin: 0; font-size: 12.5px; color: var(--muted); }
   .comp-card .foot { margin-top: 13px; font-family: 'Space Mono', monospace; font-size: 11px; color: var(--ink); font-weight: 700; display: flex; align-items: center; gap: 5px; text-decoration: underline; text-underline-offset: 3px; }
   .comp-card .foot .icon { width: 12px; height: 12px; }
@@ -274,21 +273,6 @@
   .drawer-kv .kv-row .k { font-family: 'Space Mono', monospace; color: var(--muted); text-transform: uppercase; font-size: 10.5px; letter-spacing: 0.04em; }
   .drawer-kv .kv-row .v { font-weight: 700; text-align: right; }
   .drawer-section-label { font-family: 'Space Mono', monospace; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 10px; }
-
-  .drawer-action-bar { display: flex; align-items: center; gap: 12px; background: var(--ink); padding: 13px 16px; margin-bottom: 22px; }
-  .drawer-action-bar.hidden { display: none; }
-  .drawer-action-bar button { font-family: 'Space Mono', monospace; font-weight: 700; font-size: 12px; text-transform: uppercase; background: var(--gold); color: var(--ink); border: none; padding: 9px 18px; cursor: pointer; flex: none; }
-  .drawer-action-bar button:hover { background: #DDAE3C; }
-  .drawer-action-bar button:disabled { opacity: 0.6; cursor: default; }
-  .drawer-action-bar span { font-family: 'Space Mono', monospace; font-size: 10.5px; color: #9C978A; }
-
-  .ai-cmd-wrap { display: flex; gap: 0; border: 1.5px solid var(--line); margin-bottom: 10px; }
-  .ai-cmd-wrap input { flex: 1; min-width: 0; font-family: 'Space Mono', monospace; font-size: 12px; padding: 10px 12px; border: none; background: var(--card); color: var(--ink); }
-  .ai-cmd-wrap input:focus { outline: none; background: var(--paper); }
-  .ai-cmd-wrap button { font-family: 'Space Mono', monospace; font-weight: 700; font-size: 11px; text-transform: uppercase; background: var(--ink); color: var(--paper); border: none; padding: 0 16px; cursor: pointer; flex: none; }
-  .ai-cmd-wrap button:hover { background: var(--gold); color: var(--ink); }
-  .ai-reply { border: 1.5px solid var(--line); border-left: 4px solid var(--gold); background: var(--paper); padding: 11px 14px; margin-bottom: 22px; font-size: 12.5px; line-height: 1.5; animation: rise .2s ease; }
-  .ai-reply b { color: var(--gold); }
   .drawer-log { display: flex; flex-direction: column; gap: 0; }
   .log-item { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line-soft); }
   .log-item:last-child { border-bottom: none; }
@@ -310,7 +294,7 @@
   .doc-table tr:last-child td { padding-top: 10px; font-weight: 700; }
   .doc-status { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line-soft); font-family: 'Space Mono', monospace; font-size: 10.5px; color: var(--gold); text-transform: uppercase; }
 
-  .menu-btn, .conv-back { display: none; }
+  .menu-btn, .conv-back, .sidebar-backdrop { display: none; }
 
   /* ---------- Mobile ---------- */
   @media (max-width: 860px) {
@@ -329,7 +313,7 @@
     }
     .sidebar.open { transform: none; }
     .sidebar-backdrop {
-      position: fixed; inset: 0; background: rgba(10,10,10,0.5); z-index: 65;
+      display: block; position: fixed; inset: 0; background: rgba(10,10,10,0.5); z-index: 65;
       opacity: 0; pointer-events: none; transition: opacity .2s ease;
     }
     .sidebar-backdrop.open { opacity: 1; pointer-events: auto; }
@@ -527,7 +511,7 @@
               <input type="text" id="chat-input" placeholder="reply as markus (overrides ai)…" />
               <button id="chat-send"><svg class="icon" style="width:13px;height:13px"><use href="#i-send"/></svg>send</button>
             </div>
-            <div class="ai-note"><svg class="icon"><use href="#i-check"/></svg><span id="ai-note-text">ai booked this appointment automatically — no manual work needed</span></div>
+            <div class="ai-note"><svg class="icon"><use href="#i-check"/></svg>ai booked this appointment automatically — no manual work needed</div>
           </div>
         </div>
       </section>
@@ -659,32 +643,32 @@
         <div class="panel-head"><div class="eyebrow"><span class="tag">phase_03</span><h2>Compliance</h2></div><span class="hint">"we organize your paperwork."<br/>ai drafts, your accountant reviews &amp; files</span></div>
         <div class="comp-grid">
           <div class="comp-card">
-            <div class="top"><div><span class="tag comp-cat">tax</span><h3>VAT Return, Q3</h3></div><span class="chip warn"><span class="dot"></span>due in 12 days</span></div>
+            <div class="top"><h3>VAT Return, Q3</h3><span class="chip warn"><span class="dot"></span>due in 12 days</span></div>
             <p>Draft prepared from 34 invoices &amp; expense records, ready to export for your accountant, Ms. Hoffmann.</p>
             <div class="foot">export draft →</div>
           </div>
           <div class="comp-card">
-            <div class="top"><div><span class="tag comp-cat">insurance</span><h3>Business Liability Insurance</h3></div><span class="chip ok"><span class="dot"></span>active</span></div>
+            <div class="top"><h3>Business Liability Insurance</h3><span class="chip ok"><span class="dot"></span>active</span></div>
             <p>Policy with Allianz, valid through 03/2027. No open items.</p>
             <div class="foot">view policy →</div>
           </div>
           <div class="comp-card">
-            <div class="top"><div><span class="tag comp-cat">certification</span><h3>Master Craftsman Certificate</h3></div><span class="chip ok"><span class="dot"></span>on file</span></div>
+            <div class="top"><h3>Master Craftsman Certificate</h3><span class="chip ok"><span class="dot"></span>on file</span></div>
             <p>Registered with the Berlin Chamber of Skilled Crafts, Electrical trade. Last verified: Jan 2026.</p>
             <div class="foot">open document →</div>
           </div>
           <div class="comp-card">
-            <div class="top"><div><span class="tag comp-cat">government correspondence</span><h3>Letter to the Neukölln Tax Office</h3></div><span class="chip steel"><span class="dot"></span>draft ready</span></div>
+            <div class="top"><h3>Letter to the Neukölln Tax Office</h3><span class="chip steel"><span class="dot"></span>draft ready</span></div>
             <p>Reply to their inquiry about the small-business VAT exemption — draft written, waiting on your approval to send.</p>
             <div class="foot">review draft →</div>
           </div>
           <div class="comp-card">
-            <div class="top"><div><span class="tag comp-cat">hr</span><h3>Employee Documents</h3></div><span class="chip ok"><span class="dot"></span>up to date</span></div>
+            <div class="top"><h3>Employee Documents</h3><span class="chip ok"><span class="dot"></span>up to date</span></div>
             <p>Jonas P. — apprenticeship certificate on file. 2 employees, all contracts and safety certs current.</p>
             <div class="foot">view records →</div>
           </div>
           <div class="comp-card">
-            <div class="top"><div><span class="tag comp-cat">supplies</span><h3>Procurement — Cable &amp; Conduit</h3></div><span class="chip warn"><span class="dot"></span>reorder suggested</span></div>
+            <div class="top"><h3>Procurement — Cable &amp; Conduit</h3><span class="chip warn"><span class="dot"></span>reorder suggested</span></div>
             <p>Stock for the Krause wallbox job is running low. AI drafted a reorder with your usual supplier, Elektro-Großhandel Berlin.</p>
             <div class="foot">review order →</div>
           </div>
@@ -721,17 +705,7 @@
     <div class="drawer-body">
       <div class="drawer-kv" id="drawer-kv"></div>
       <div id="drawer-doc-wrap"></div>
-      <div class="drawer-action-bar hidden" id="drawer-pay-bar">
-        <button id="drawer-pay-btn">pay now</button>
-        <span id="drawer-pay-hint">schedules automatic payment via SEPA</span>
-      </div>
-      <div class="drawer-section-label">// tell ai what to do with this record</div>
-      <div class="ai-cmd-wrap">
-        <input type="text" id="drawer-ai-input" placeholder="e.g. &quot;pay this&quot; or &quot;email the supplier to change the delivery date&quot;" />
-        <button id="drawer-ai-send">send</button>
-      </div>
-      <div id="drawer-ai-reply"></div>
-      <div class="drawer-section-label" style="margin-top:20px">// what happened</div>
+      <div class="drawer-section-label">// activity log</div>
       <div class="drawer-log" id="drawer-log"></div>
     </div>
     <div class="drawer-foot hidden" id="drawer-foot">
@@ -760,61 +734,11 @@
   const scroll = document.getElementById('conv-scroll');
   const chatInput = document.getElementById('chat-input');
   const sendBtn = document.getElementById('chat-send');
-  const convWho = document.querySelector('.conv-head .who');
-  const convAddr = document.querySelector('.conv-head .addr');
-  const convChip = document.querySelector('.conv-head .chip');
-
-  const conversations = {
-    t1: {
-      who: 'Sabine Wittek', addr: 'Weserstraße 88, 12045 Berlin',
-      chipClass: 'ok', chipText: 'booked', replyName: 'sabine',
-      note: 'ai booked this appointment automatically — no manual work needed',
-      replies: [
-        "Got it, I'll log that and confirm with the customer automatically.",
-        "Understood — I'll update the appointment and send a WhatsApp confirmation.",
-        "Noted. Should I also release this to the technician's calendar?"
-      ],
-      bubbles: [
-        ['cust', 'sabine · 1:51pm', "Hi, the outlet in my kitchen stopped working this morning. Could someone come take a look?"],
-        ['ai', 'handwerkos', "Hi Ms. Wittek, that sounds like a tripped breaker or a short. I can send a technician tomorrow (Thu) at 9:00 AM or 2:30 PM — which works better for you?"],
-        ['cust', 'sabine · 1:58pm', "2:30 PM works well."],
-        ['ai', 'handwerkos', "Perfect, you're booked: Thu, 2:30 PM, Weserstraße 88. You'll get a reminder an hour before."],
-        ['cust', 'sabine · 2:02pm', "Tomorrow's appointment works, thank you!"]
-      ]
-    },
-    t2: {
-      who: 'Mehmet Özdemir', addr: 'Karl-Marx-Str. 201, Neukölln',
-      chipClass: 'steel', chipText: 'site visit scheduled', replyName: 'mehmet',
-      note: 'ai scheduled this site visit — the formal quote still needs your review before sending',
-      replies: [
-        "Got it — I'll send a written quote right after the site visit.",
-        "Noted, I'll bring that up with the technician before the visit.",
-        "Sure, I'll add that note to the job file."
-      ],
-      bubbles: [
-        ['cust', 'mehmet · 11:40am', "Hi, do you have time to send a quote for the fuse box replacement? It's an older model, probably needs a full upgrade."],
-        ['ai', 'handwerkos', "Happy to help — for something like this I'd rather do a quick site visit before quoting, so the price is accurate. I have Friday 9:00 AM open."],
-        ['cust', 'mehmet · 11:47am', "Friday 9:00 works, thanks."]
-      ]
-    },
-    t3: {
-      who: 'Müller Property Mgmt', addr: 'Wallstraße 12, Mitte',
-      chipClass: 'warn', chipText: 'technician dispatched', replyName: 'müller pm',
-      note: 'ai flagged this as an emergency and dispatched a technician automatically',
-      replies: [
-        "Understood, I'll pass that along to the technician on site.",
-        "Noted — I'll follow up with photos once the work is done.",
-        "Got it, logging that for the invoice notes."
-      ],
-      bubbles: [
-        ['cust', 'müller pm · voicemail, yesterday 4:12pm', "This is Hausverwaltung Müller — we have water damage near the stairwell lighting panel at Wallstraße 12, please call back today, it's urgent."],
-        ['ai', 'handwerkos', "Received and logged as an emergency. A technician has been dispatched — arriving within 90 minutes. SMS confirmation sent to your office."],
-        ['cust', 'müller pm · 4:20pm', "Great, thank you for the fast response."]
-      ]
-    }
-  };
-  let activeThread = 't1';
-
+  const aiReplies = [
+    "Got it, I'll log that and confirm with the customer automatically.",
+    "Understood — I'll update the appointment and send a WhatsApp confirmation.",
+    "Noted. Should I also release this to the technician's calendar?"
+  ];
   function addBubble(cls, tag, text) {
     const div = document.createElement('div');
     div.className = 'bubble ' + cls;
@@ -823,23 +747,9 @@
     scroll.scrollTop = scroll.scrollHeight;
     return div;
   }
-  const aiNoteText = document.getElementById('ai-note-text');
-  function renderConversation(id) {
-    const c = conversations[id];
-    if (!c) return;
-    activeThread = id;
-    convWho.textContent = c.who;
-    convAddr.textContent = c.addr;
-    convChip.className = 'chip ' + c.chipClass;
-    convChip.innerHTML = '<span class="dot"></span>' + c.chipText;
-    scroll.innerHTML = '';
-    c.bubbles.forEach(([cls, tag, text]) => addBubble(cls, tag, text));
-    if (aiNoteText && c.note) aiNoteText.textContent = c.note;
-  }
   function send() {
     const val = chatInput.value.trim();
     if (!val) return;
-    const c = conversations[activeThread];
     addBubble('ai', 'markus (override)', val);
     chatInput.value = '';
     const typing = document.createElement('div');
@@ -849,7 +759,7 @@
     scroll.scrollTop = scroll.scrollHeight;
     setTimeout(() => {
       typing.remove();
-      addBubble('cust', c.replyName, c.replies[Math.floor(Math.random() * c.replies.length)]);
+      addBubble('cust', 'sabine', aiReplies[Math.floor(Math.random() * aiReplies.length)]);
     }, 900);
   }
   sendBtn.addEventListener('click', send);
@@ -923,14 +833,13 @@
   sidebarBackdrop.addEventListener('click', closeSidebar);
   document.querySelectorAll('.nav-item').forEach(b => b.addEventListener('click', closeSidebar));
 
-  /* --- Inbox: switch conversation on thread click (+ mobile list<->conversation) --- */
+  /* --- Mobile inbox: thread list <-> conversation --- */
   const inboxEl = document.getElementById('inbox');
   const convBack = document.getElementById('conv-back');
   document.querySelectorAll('.thread').forEach(t => {
     t.addEventListener('click', () => {
       document.querySelectorAll('.thread').forEach(x => x.classList.remove('active'));
       t.classList.add('active');
-      renderConversation(t.dataset.thread);
       inboxEl.classList.add('show-conv');
     });
   });
@@ -1001,91 +910,6 @@
   function slugify(s) {
     return (s || 'document').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'document';
   }
-
-  /* --- Pay / remind action bar + per-record AI command --- */
-  const drawerPayBar = document.getElementById('drawer-pay-bar');
-  const drawerPayBtn = document.getElementById('drawer-pay-btn');
-  const drawerPayHint = document.getElementById('drawer-pay-hint');
-  const drawerAiInput = document.getElementById('drawer-ai-input');
-  const drawerAiSend = document.getElementById('drawer-ai-send');
-  const drawerAiReply = document.getElementById('drawer-ai-reply');
-  let currentRowCard = null;
-
-  function logAction(text) {
-    const item = document.createElement('div');
-    item.className = 'log-item';
-    item.innerHTML = '<span class="log-dot"></span><div><div class="log-text">' + text + '</div><div class="log-time">just now</div></div>';
-    dLog.prepend(item);
-  }
-
-  function setPayBar(mode, counterparty, amount) {
-    drawerPayBtn.disabled = false;
-    if (mode === 'pay') {
-      drawerPayBar.classList.remove('hidden');
-      drawerPayBtn.textContent = 'pay now';
-      drawerPayHint.textContent = 'sends ' + amount + ' to ' + counterparty + ' via SEPA';
-      drawerPayBtn.onclick = () => {
-        drawerPayBtn.disabled = true;
-        drawerPayBtn.textContent = 'paying…';
-        setTimeout(() => {
-          drawerPayBtn.textContent = 'paid ✓';
-          if (currentRowCard) {
-            const chip = currentRowCard.querySelector('.chip');
-            const meta = currentRowCard.querySelector('.row-meta');
-            if (chip) chip.outerHTML = '<span class="chip ok"><span class="dot"></span>paid</span>';
-            if (meta) meta.textContent = 'paid just now';
-          }
-          logAction('Payment sent — ' + amount + ' to ' + counterparty + ' via SEPA.');
-        }, 900);
-      };
-    } else if (mode === 'remind') {
-      drawerPayBar.classList.remove('hidden');
-      drawerPayBtn.textContent = 'send reminder';
-      drawerPayHint.textContent = 'sends a payment reminder to ' + counterparty;
-      drawerPayBtn.onclick = () => {
-        drawerPayBtn.disabled = true;
-        drawerPayBtn.textContent = 'sending…';
-        setTimeout(() => {
-          drawerPayBtn.textContent = 'sent ✓';
-          if (currentRowCard) {
-            const meta = currentRowCard.querySelector('.row-meta');
-            if (meta) meta.textContent = 'reminder sent just now';
-          }
-          logAction('Reminder sent to ' + counterparty + '.');
-        }, 900);
-      };
-    } else {
-      drawerPayBar.classList.add('hidden');
-    }
-  }
-
-  function aiCmdReply(text) {
-    const lower = text.toLowerCase();
-    drawerAiReply.innerHTML = '<div class="ai-reply"><b>handwerkos</b> thinking…</div>';
-    setTimeout(() => {
-      let reply;
-      if (/pay|paid/.test(lower) && !drawerPayBar.classList.contains('hidden')) {
-        drawerPayBtn.click();
-        reply = "On it — payment initiated. You'll see the status update above.";
-      } else if (/remind|chase|overdue/.test(lower) && !drawerPayBar.classList.contains('hidden')) {
-        drawerPayBtn.click();
-        reply = "Sending the reminder now — you'll see the status update above.";
-      } else if (/letter|email|write|tell (the )?(supplier|customer|contractor|contact)|message/.test(lower)) {
-        reply = "Drafted a message based on your request — queued in the Inbox for your review before it sends.";
-        logAction('Drafted outgoing message based on your request.');
-      } else {
-        reply = "Got it — logged for the record. (Demo note: full task execution isn't wired up yet, but this is exactly where it would run.)";
-      }
-      drawerAiReply.innerHTML = '<div class="ai-reply"><b>handwerkos</b> ' + reply + '</div>';
-    }, 850);
-  }
-  drawerAiSend.addEventListener('click', () => {
-    const v = drawerAiInput.value.trim();
-    if (!v) return;
-    aiCmdReply(v);
-    drawerAiInput.value = '';
-  });
-  drawerAiInput.addEventListener('keydown', e => { if (e.key === 'Enter') drawerAiSend.click(); });
   function setDrawerDoc(html, filename) {
     drawerDocWrap.innerHTML = html || '';
     if (html) {
@@ -1167,25 +991,16 @@
       const panelId = card.closest('.panel')?.id || '';
       const statusText = chip ? chip.textContent.trim() : metas.join(' · ');
       let docHtml = '';
-      currentRowCard = card;
-      drawerAiReply.innerHTML = '';
-      setPayBar('none');
 
       if (panelId === 'panel-invoices' && amount) {
         const direction = card.dataset.direction === 'in' ? 'in' : 'out';
         const [numPart, counterPart] = title.split(' · ');
         const [descPart, datePart] = sub.split(' · ');
-        const counterpartyName = (counterPart || title).trim();
         docHtml = financialDoc({
           docNumber: numPart || title, kind: 'Invoice',
-          counterparty: counterpartyName, description: (descPart || sub).trim(),
+          counterparty: (counterPart || title).trim(), description: (descPart || sub).trim(),
           dateLine: (datePart || metas[0] || '').trim(), amount, statusText, direction
         });
-        const already = chip && /paid/i.test(chip.textContent);
-        if (!already) {
-          if (direction === 'in') setPayBar('pay', counterpartyName, amount);
-          else if (chip && (chip.classList.contains('warn') || chip.classList.contains('critical'))) setPayBar('remind', counterpartyName, amount);
-        }
       } else if (panelId === 'panel-quotes' && amount) {
         const [numPart, counterPart] = title.split(' · ');
         docHtml = financialDoc({
@@ -1296,9 +1111,6 @@
       const rows = [];
       if (chip) rows.push(['status', chip.textContent.trim()]);
       if (foot) rows.push(['next action', foot]);
-      currentRowCard = card;
-      drawerAiReply.innerHTML = '';
-      setPayBar('none');
       setDrawerDoc(complianceDocs[title.trim()] || '', slugify(title) + '.txt');
       openDrawer({ eyebrow: 'compliance document', title, sub: '', rows, status: statusClass(chip) });
     });
